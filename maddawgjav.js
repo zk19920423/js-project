@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         maddawgjav.net排版Zk版脚本
-// @version      1.0.2
+// @version      1.0.3
 // @description  maddawgjav.net网站重新排版，浏览图片内容更方便，你懂的，根据原作者修改版，解决一些图片显示不正常的情况
 // @match        http://maddawgjav.net/*
 // @match        http://www.imagebam.com/image/*?url=maddawgjav.net
@@ -15,6 +15,18 @@
 // @encoding     utf-8
 
 // @namespace https://greasyfork.org/users/117729
+
+// @copyright    hobby 2016-01-02
+
+// maddawgjav.net网站重新排版，浏览图片内容更方便，你懂的，根据原作者修改版，解决一些图片显示不正常的情况
+// 如有问题或者改进意见，请您反馈 我会尽快做出修改
+// 内地用户推荐Chrome + Tampermonkey（必须扩展） + XX-Net(代理) + Proxy SwitchyOmega（扩展）的环境下配合使用。
+
+// v1.0.3 修复一部分封面显示问题
+// v1.0.2 修复一部分图片显示问题
+// v1.0.0 针对maddawgjav.net网站的支持，支持方便浏览图片
+
+
 // ==/UserScript==
 /* jshint -W097 */
 'use strict';
@@ -58,13 +70,13 @@ GM_addStyle('.entry p {margin: 0 0 5px 0;}');
 GM_addStyle('.post-info-top {border-top: 1px solid #ddd;line-height: 15px;color: #999;height: 15px;margin: 0 0 0;padding: 0 0;}');
 GM_addStyle('.post-info-date {background-position: 0 -40px;float: right;}');
 
-$("#footer-inside").remove();
+$("#footer-inside").remove();//清除内容
 
 document.addEventListener('DOMContentLoaded', function () {
 
     $("#sidebar-border").insertBefore("#content");
 
-    // 过滤文字单词函数
+    // 过滤文字单词函数，删除相关文字
     // param srcString 需过滤字符串
     // retunr 过滤后的字符串
     function filterWords(srcString){
@@ -74,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return srcString;
     }
 
-    // 判断字符串是否包含单词字典
+    // 判断字符串是否包含单词字典，获取番号
     // param srcString 需判断字符串
     // retunr true,false
     function hasWords(srcString){
@@ -134,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return matches ? matches[1] : url;
     }
 
-    // 获取后缀域名
+    // 获取后缀域名，取www之后的地址
     function getLastName(webName) {
         var array = webName.split(".");
         if(array.length === 3){
@@ -146,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return webName;
         }
     }
-
+	//获取文件名
     function urlfilename(a) {
         var n1 = a.lastIndexOf('/') + 1;
         var n2 = a.lastIndexOf('.');
@@ -336,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
         delTOneImg($("img[class='alignnone']"));
         delTOneImg($("img[class='alignnone aligncenter']"));
 
-        //所有p标签内图片
+        //所有p标签内图片-----内容封面图片
         var img_array = $("p[style='text-align: left;'] img");
         for (var index = 0; index < img_array.length; index++) {
             //TODO:foreach:2
@@ -368,13 +380,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if(lastName === 'pixhost.org'){
                 $(img.parentElement).attr("href","javascript:void(0);");
-                $(img.parentElement).attr("name",img.src.replace('thumbs','images').replace('t7','img7'));
+                $(img.parentElement).attr("name",img.src.replace('thumbs','images').replace('t6','img6').replace('t7','img7').replace('t8','img8').replace('t9','img9'));
                 //img.src = img.src.replace('thumbs','images').replace('//t','//img');
                 //showImg2(img);
             }
         }
 
-        //所有内容大图数组对象
+        //所有内容大图数组对象-----内容展示图片
         var dimg_array = $("p[style='text-align: left;'] a img");
         for (var index = 0; index < dimg_array.length; index++) {
             //内容大图对象
@@ -386,80 +398,80 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         var dimg_array = $("div[class='entry'] a img");
-         for (var index = 0; index < img_array.length; index++) {
-        var img = img_array[index];
-        var web_name = getHostName(img.src);
-        var lastName = getLastName(web_name);
+        for (var index = 0; index < img_array.length; index++) {
+			var img = img_array[index];
+			var web_name = getHostName(img.src);
+			var lastName = getLastName(web_name);
 
-        if(lastName === 'imgclick.net'){
-            //debugger;
-            $(img).css('width','71px');
-            //img.src = img.src.replace('_t','');
-            //var img = this.firstChild;
-            $(img.parentElement).removeAttr("target");
-            img.parentElement.href = "javascript:void(0);";
-            //重新插入img新标签，在原img的前面
-            img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src.replace('_t','') +'" border="0" style="width: 71px;" openflag="0">');
-            var a_element = img.parentElement;
-            //删除原img标签
-            img.parentNode.removeChild(img);
+			if(lastName === 'imgclick.net'){
+				//debugger;
+				$(img).css('width','71px');
+				//img.src = img.src.replace('_t','');
+				//var img = this.firstChild;
+				$(img.parentElement).removeAttr("target");
+				img.parentElement.href = "javascript:void(0);";
+				//重新插入img新标签，在原img的前面
+				img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src.replace('_t','') +'" border="0" style="width: 71px;" openflag="0">');
+				var a_element = img.parentElement;
+				//删除原img标签
+				img.parentNode.removeChild(img);
 
-            var imgN = $('#img'+index)[0];
-            //新img标签增加onclick事件
-            imgN.onclick = function(event){
-                //debugger;
-                event = event || window.event;
-                //屏蔽到外部的onclick事件
-                event.cancelBubble = true;
+				var imgN = $('#img'+index)[0];
+				//新img标签增加onclick事件
+				imgN.onclick = function(event){
+					//debugger;
+					event = event || window.event;
+					//屏蔽到外部的onclick事件
+					event.cancelBubble = true;
 
-                if(this.getAttribute("openflag") !== '1'){
-                    this.style.maxWidth = "none";
-                    this.style.width = "";
-                    this.setAttribute("openflag","1");
-                }
-                else{
-                    //chrome浏览器必须使用71px才生效
-                    this.style.width = "71px";
-                    this.setAttribute("openflag","0");
-                }
-            };
-        }
-        if(lastName === 'pixhost.org'){
-            //debugger;
-            $(img).css('width','71px');
-            //img.src = img.src.replace('_t','');
-            //var img = this.firstChild;
-            $(img.parentElement).removeAttr("target");
-            img.parentElement.href = "javascript:void(0);";
-            //重新插入img新标签，在原img的前面
-            img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src.replace('t6','img6').replace('t7','img7').replace('t8','img8').replace('t9','img9').replace('thumbs','images') +'" border="0" style="width: 71px;" openflag="0">');
-            var a_element = img.parentElement;
-            //删除原img标签
-            img.parentNode.removeChild(img);
+					if(this.getAttribute("openflag") !== '1'){
+						this.style.maxWidth = "none";
+						this.style.width = "";
+						this.setAttribute("openflag","1");
+					}
+					else{
+						//chrome浏览器必须使用71px才生效
+						this.style.width = "71px";
+						this.setAttribute("openflag","0");
+					}
+				};
+			}
+			if(lastName === 'pixhost.org'){
+				//debugger;
+				$(img).css('width','71px');
+				//img.src = img.src.replace('_t','');
+				//var img = this.firstChild;
+				$(img.parentElement).removeAttr("target");
+				img.parentElement.href = "javascript:void(0);";
+				//重新插入img新标签，在原img的前面
+				img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src.replace('t6','img6').replace('t7','img7').replace('t8','img8').replace('t9','img9').replace('thumbs','images') +'" border="0" style="width: 71px;" openflag="0">');
+				var a_element = img.parentElement;
+				//删除原img标签
+				img.parentNode.removeChild(img);
 
-            var imgN = $('#img'+index)[0];
-            //新img标签增加onclick事件
-            imgN.onclick = function(event){
-                //debugger;
-                event = event || window.event;
-                //屏蔽到外部的onclick事件
-                event.cancelBubble = true;
+				var imgN = $('#img'+index)[0];
+				//新img标签增加onclick事件
+				imgN.onclick = function(event){
+					//debugger;
+					event = event || window.event;
+					//屏蔽到外部的onclick事件
+					event.cancelBubble = true;
 
-                if(this.getAttribute("openflag") !== '1'){ 
-                    this.style.maxWidth = "none";
-                    this.style.width = "100%";
-                    this.setAttribute("openflag","1");
-                }
-                else{
-                    //chrome浏览器必须使用71px才生效
-                    this.style.width = "71px";
-                    this.setAttribute("openflag","0");
-                }
-            };
-        }
-        else{
-            $(img).css("max-width","none");
-        }
-    }
+					if(this.getAttribute("openflag") !== '1'){ 
+						this.style.maxWidth = "none";
+						this.style.width = "100%";
+						this.setAttribute("openflag","1");
+					}
+					else{
+						//chrome浏览器必须使用71px才生效
+						this.style.width = "71px";
+						this.setAttribute("openflag","0");
+					}
+				};
+			}
+			else{
+				$(img).css("max-width","none");
+			}
+		}
     }
 }, false);
