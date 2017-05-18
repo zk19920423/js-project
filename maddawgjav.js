@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         maddawgjav.net排版Zk版脚本
-// @version      1.0.3
+// @version      1.0.4
 // @description  maddawgjav.net网站重新排版，浏览图片内容更方便，你懂的，根据原作者修改版，解决一些图片显示不正常的情况
 // @match        http://maddawgjav.net/*
 // @match        http://www.imagebam.com/image/*?url=maddawgjav.net
@@ -22,6 +22,7 @@
 // 如有问题或者改进意见，请您反馈 我会尽快做出修改
 // 内地用户推荐Chrome + Tampermonkey（必须扩展） + XX-Net(代理) + Proxy SwitchyOmega（扩展）的环境下配合使用。
 
+// v1.0.4 为提高相应速度，调整为只有在点击大图时才加载大图
 // v1.0.3 修复一部分封面显示问题
 // v1.0.2 修复一部分图片显示问题
 // v1.0.0 针对maddawgjav.net网站的支持，支持方便浏览图片
@@ -380,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if(lastName === 'pixhost.org'){
                 $(img.parentElement).attr("href","javascript:void(0);");
-                $(img.parentElement).attr("name",img.src.replace('thumbs','images').replace('t6','img6').replace('t7','img7').replace('t8','img8').replace('t9','img9'));
+                $(img.parentElement).attr("name",img.src.replace('thumbs','images').replace('//t','//img'));
                 //img.src = img.src.replace('thumbs','images').replace('//t','//img');
                 //showImg2(img);
             }
@@ -411,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				$(img.parentElement).removeAttr("target");
 				img.parentElement.href = "javascript:void(0);";
 				//重新插入img新标签，在原img的前面
-				img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src.replace('_t','') +'" border="0" style="width: 71px;" openflag="0">');
+				img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src +'" border="0" style="width: 71px;" openflag="0">');
 				var a_element = img.parentElement;
 				//删除原img标签
 				img.parentNode.removeChild(img);
@@ -425,6 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					event.cancelBubble = true;
 
 					if(this.getAttribute("openflag") !== '1'){
+						this.src = this.src.replace('_t','');
 						this.style.maxWidth = "none";
 						this.style.width = "";
 						this.setAttribute("openflag","1");
@@ -444,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				$(img.parentElement).removeAttr("target");
 				img.parentElement.href = "javascript:void(0);";
 				//重新插入img新标签，在原img的前面
-				img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src.replace('t6','img6').replace('t7','img7').replace('t8','img8').replace('t9','img9').replace('thumbs','images') +'" border="0" style="width: 71px;" openflag="0">');
+				img.insertAdjacentHTML('beforeBegin', '<img id="img'+ index +'" src="'+ img.src +'" border="0" style="width: 71px;" openflag="0">');
 				var a_element = img.parentElement;
 				//删除原img标签
 				img.parentNode.removeChild(img);
@@ -458,6 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					event.cancelBubble = true;
 
 					if(this.getAttribute("openflag") !== '1'){ 
+						this.src = this.src.replace('//t','//img').replace('thumbs','images');
 						this.style.maxWidth = "none";
 						this.style.width = "100%";
 						this.setAttribute("openflag","1");
